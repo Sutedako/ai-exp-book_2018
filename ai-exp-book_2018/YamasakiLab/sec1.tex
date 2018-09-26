@@ -1,0 +1,99 @@
+%!TEX root = ../main.tex
+
+\section{CNNとは}
+主に全結合層，畳み込み層，プーリング層から構成されるDeep Neural Networks (DNN) のことである．各層はニューロンによって構成される．
+
+\subsection{全結合層}
+全結合層 (FC層) に含まれる各ニューロンは前の層の全てのニューロンと連結している．前の層の出力を\(h^{i-1}\)とすると重み\(W\)のFC層の出力\(h^i\)は
+\[
+h^i = Wh^{i-1} + b．
+\]
+\(b\)は定数である．下の図\ref{fig:fc1}と\ref{fig:fc2}はそれぞれFC層の構造とどのようにニューロンの値を計算するかを示したものである．定数bも学習対象ではあるが省略している．
+
+\begin{figure}[ht]
+    \begin{tabular}{cc}
+      %---- 最初の図 ---------------------------
+      \begin{minipage}[t]{0.4\hsize}
+        \centering
+        \includegraphics[width=0.95\linewidth]{images/YamasakiLab/sec1/fc1.eps}
+        \caption{FC層の構造}
+        \label{fig:fc1}
+      \end{minipage} &
+      %---- 2番目の図 --------------------------
+      \begin{minipage}[t]{0.6\hsize}
+        \centering
+        \includegraphics[width=0.95\linewidth]{images/YamasakiLab/sec1/fc2.eps}
+        \caption{FC層の計算と学習対象}
+        \label{fig:fc2}
+      \end{minipage}
+      %---- 図はここまで ----------------------
+    \end{tabular}
+  \end{figure}
+
+
+\subsection{畳み込み層}
+畳み込み層はカーネルと呼ばれる小さな受容野をもとに結合していくため前層のニューロンに対して疎結合となる．これは局所特徴に注目することに相当する．
+言葉で説明すると分かりづらいが図~\ref{fig:conv1}と図~\ref{fig:conv2}を見てほしい．
+いくつかのkernelを畳み込むことで新しい層を作っている．第i層のサイズは第i-1層のサイズとpadding，kernelのサイズとstride幅によって決まる．paddingというのは第i-1層の周囲に適当な数字をくっつけてサイズを大きくするためのものである．kernelのサイズは縦と横の大きさのことであり，チャンネル(厚み)は第i-1層と同じである．
+stride幅は畳み込む時にkernelを移動させる幅のことを意味し，大きければ大きいほど第i層のサイズは小さくなる．
+
+また第i層の厚み，すなわちチャンネル数はkernelの数と等しい．これは図~\ref{fig:conv1}と~\ref{fig:conv2}をじっくり見比べてもらえばわかると思う．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth] {images/YamasakiLab/sec1/conv1.eps}
+		\caption{畳み込み層の構造}
+		\label{fig:conv1}
+	\end{center}
+\end{figure}
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth] {images/YamasakiLab/sec1/conv2.eps}
+		\caption{畳み込み層の計算と学習対象}
+		\label{fig:conv2}
+	\end{center}
+\end{figure}
+
+\subsection{プーリング層}
+畳み込み層と似ているがパラメータは固定されており，学習対象は存在しない．図~\ref{fig:pool1}はkernelが見ている範囲の平均値を出力するものである(average poolingと呼ばれる)．
+
+プーリング層の目的は画像内の特徴に関して，位置情報を曖昧にするためである．プーリングを行なうことで位置の変化に対して頑健な特徴表現を学習できる．平均値を求めるもの以外にも注目領域内の最大値を出力するmax poolingなどが存在する．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth] {images/YamasakiLab/sec1/pool1.eps}
+		\caption{プーリング層の計算}
+		\label{fig:pool1}
+	\end{center}
+\end{figure}
+
+\subsection{活性化関数}
+FC層や畳み込み層は結局のところ線形変換であり，このままでは豊かな変換能力を習得できない (線形変換を重ね合わせたところで表現能力は増さない) ため，殆どの場合，各ニューロンに対して活性化関数を適用することで非線形変換を学習させる．図~\ref{fig:activate}はFC層に対して活性化関数を適用している図である．学習対象は何もないがこれにより非線形変換を表現できる．\(\phi\)にはsigmoid関数やReLU関数がよく用いられ，特に画像分野ではReLU関数が注目を集めている．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth] {images/YamasakiLab/sec1/activate.eps}
+		\caption{活性化関数}
+		\label{fig:activate}
+	\end{center}
+\end{figure}
+
+\subsection{畳み込み層と全結合層}
+畳み込み層は1次元的なイメージなのに対し畳み込み層は3次元であるためその結合がイメージしづらいと思う．
+そこで図~\ref{fig:conv_to_fc}を見てもらえればまだなんとなくなイメージがつかめるのではないだろうか．
+図はchannel数3，高さ2，幅2の3次元の第$i-1$層からサイズ5のFC層への連結方法を示している．図が煩雑になるので第$i-1$層の1channel目からしか線を伸ばさなかったが要は全ニューロン同士が連結していることを掴んでもらえば問題ない．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\linewidth] {images/YamasakiLab/sec1/conv_to_fc.eps}
+		\caption{畳み込み層から全結合層へ}
+		\label{fig:conv_to_fc}
+	\end{center}
+\end{figure}
+
+
+以上のことは
+\url{https://qiita.com/icoxfog417/items/5fd55fad152231d706c2}や\url{https://deepage.net/deep_learning/2016/11/07/convolutional_neural_network.html}により，詳細に説明されている．
+上記以外にもDropOutやBatch Normalization等様々な手法が提案されている．調べてみたりTAに聞いてみたりしよう．
+
+また有名なCNNであるVGG16やResNet等の構造を調べてみよう．

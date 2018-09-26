@@ -1,0 +1,224 @@
+%!TEX root = ../main.tex
+
+\setcounter{section}{0}
+
+\parindent = 0pt
+
+\section*{Deep Learning用VM (Linux)構築手順}
+1. \url{http://portal.azure.com/}にアクセスして，マイクロソフトアカウントの{\bf[ユーザー名]}と{\bf[パスワード]}を入力して{\bf[サインイン]}をクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=6cm]
+		{images/YamasakiLab/azure/pic01.eps}
+	\end{center}
+\end{figure}
+
+2. ポータル画面が表示されたら，{\bf[+新規]}を選択する．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=6cm]
+		{images/YamasakiLab/azure/pic02.eps}
+	\end{center}
+\end{figure}
+
+\newpage
+
+3．Deep Learning Virtual Machineを検索し，{\bf[作成]}をクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic03.eps}
+	\end{center}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic04.eps}
+	\end{center}
+\end{figure}
+
+4. VMの基本設定を行う．
+
+\parindent = 2pt
+
+\textcircled{\scriptsize 1} {\bf[Name]}にVM名を入力し，OSをWindowsからLinuxに変更する．
+
+\textcircled{\scriptsize 2} {\bf[User name]}，{\bf[Password]}，{\bf[Confirm password]}を埋める．
+{\bf[サブスクリプション]}は特には変更しなくてよい．
+
+\textcircled{\scriptsize 3} {\bf[リソース グループ]}は新規作成を選択し，好きなリソースグループ名を記入する．
+
+\textcircled{\scriptsize 4} {\bf[場所]}でサーバを作成するリージョンを選択する．
+リージョンごとにサーバの値段が異なり，リージョンによってはGPU付きのNシリーズのVMを構築できないので注意．
+値段が安いため，米国東部，米国中北部，米国西部2あたりを勧める．
+
+\textcircled{\scriptsize 5} 以上を埋めたら，{\bf[OK]}をクリックして次に進む.
+
+\parindent = 0pt
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic05.eps}
+	\end{center}
+\end{figure}
+
+\newpage
+
+5. {\bf[Virtual machine size]}をクリックしてVMのサイズを選択する．
+各リージョンで作成できるvCPU数は最大48 (GPU 8つ分)である．
+サイズは後からでも変更できる．
+サイズを選択したら，{\bf[OK]}をクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic06.eps}
+	\end{center}
+\end{figure}
+
+6. 最終検証が行われる．
+失敗した場合は現在選択しているリージョンで作成できる最大vCPU数を超えている可能性があるため，4に戻って違うリージョンを選択し直す．
+検証に成功したら，{\bf[OK]}をクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic07.eps}
+	\end{center}
+\end{figure}
+
+7. {\bf[作成]}をクリックする．VMのデプロイが開始され，完了するまで数十分かかる．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic08.eps}
+	\end{center}
+\end{figure}
+
+\newpage
+
+8. デプロイが完了したら，ダッシュボードに作成されたリソースタイルの{\bf[表示数を増やす]}をクリックし，ディスプレイマークの{\bf[仮想マシン]}をクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic09.eps}
+	\end{center}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic10.eps}
+	\end{center}
+\end{figure}
+
+
+すると，以下のようなVMの基本情報が載った画面（以降，VM基本画面と呼ぶ）が表示される．
+この画面でVMの起動と停止等を行う（最初は起動してある）．
+この画面はよく使用するので，ダッシュボードにピン留めしておくとよい．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic11.eps}
+		%\caption{VM基本画面}
+	\end{center}
+\end{figure}
+
+\newpage
+
+9. VM基本画面の左上にある{\bf[接続]}をクリックするとVMに接続するsshコマンドが表示されるため，これを参考にVMに接続する．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic12.eps}
+	\end{center}
+\end{figure}
+
+\parindent = 10pt
+
+\section*{IPアドレスの固定化}
+デフォルトではIPアドレスは動的であり，VMを停止するたびにIPが変更されてしまう．
+それを防ぐにはIPアドレスを静的にする．
+VMを起動したままの状態でVM基本画面の{\bf[パブリックIPアドレス]}の下のIPアドレスをクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic13.eps}
+	\end{center}
+\end{figure}
+
+{\bf[割り当て]}を動的から静的に変更する．{\bf[保存]}をクリックして変更を完了する．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic14.eps}
+	\end{center}
+\end{figure}
+
+\newpage
+
+\section*{ストレージ変更}
+デフォルトではストレージは50GB程度しかないので，ストレージを増やすことを勧める．
+まずVM基本画面で{\bf[停止]}をクリックしてVMを停止する．
+VMが停止したら，左側の{\bf[ディスク]}をクリックする．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic15.eps}
+	\end{center}
+\end{figure}
+
+{\bf[OSディスク]}を選択し，{\bf[サイズ]}を欲しいストレージ分だけ変更する．
+一度増やしたストレージは減らすことができないので注意．
+ストレージを変更したら{\bf[保存]}をクリックして変更を完了する．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic16.eps}
+	\end{center}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic17.eps}
+	\end{center}
+\end{figure}
+
+\newpage
+
+\section*{サイズ変更}
+VM作成後にVMのvCPU数やGPU数を変更できる．
+VM基本画面の左側の{\bf[サイズ]}をクリックし，変更を行う．
+先ほどでも述べた通り，一つのリージョンで作成できるvCPU数は最大48 (GPU 8つ分)であり，それを超える場合はサイズを増やすことができないので注意．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic18.eps}
+	\end{center}
+\end{figure}
+
+\section*{ユーザ追加}
+一つのVMで複数人が作業する場合はユーザを追加すると良い．
+VM基本画面の左側を下にスクロールし，{\bf[パスワードのリセット]}をクリックして新規ユーザのユーザ名とパスワードを設定する．
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=5cm]
+		{images/YamasakiLab/azure/pic19.eps}
+	\end{center}
+\end{figure}

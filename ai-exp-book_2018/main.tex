@@ -1,0 +1,188 @@
+\documentclass[10pt]{jsbook}
+
+\usepackage[ipaex]{pxchfon}
+\usepackage[top=20truemm,bottom=20truemm,left=35truemm,right=35truemm]{geometry}
+\usepackage{titlesec}
+\usepackage{picture}
+\usepackage{graphicx}
+\usepackage{listings,jlisting}
+
+\usepackage[usenames]{color}
+
+% 四角枠
+\usepackage{ascmac}
+
+% URL
+\usepackage{url}
+
+\usepackage{amsmath,amssymb}
+
+% colors
+\definecolor{teal}{RGB}{0,128,128}
+\definecolor{powderblue}{RGB}{176,224,230}
+\definecolor{darkslateblue}{RGB}{72,61,139}
+\definecolor{darkslategray}{RGB}{47,79,79}
+\definecolor{lightcyan}{RGB}{224,255,255}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+% 太さ
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% chapter                                                                             
+\titleformat{\chapter}[block]
+{}{}{0pt}{
+	\fontsize{40pt}{40pt}\selectfont\filleft
+}[
+\hrule \Large{\filleft 第 \thechapter 章}
+]
+
+% section
+\titleformat{\section}[block]
+{}{}{0pt}
+{
+	\hspace{0pt}
+	\normalfont \LARGE\bfseries \thesection
+%	\normalfont \Huge\bfseries \thesection
+	\hspace{0pt}
+}
+[
+\begin{picture}(100,0)
+%\put(3,30){\color{teal}\line(1,0){400}}
+\put(3,18){\color{teal}\line(1,0){350}}
+\end{picture}
+\\
+\vspace{-50pt}
+]
+
+% subsection
+\titleformat{\subsection}[block]
+{}{}{0pt}
+{
+	\hspace{0pt}
+	\normalfont \Large\bfseries \thesubsection
+	\hspace{0pt}
+}
+[
+\begin{picture}(100,0)
+\put(3,18){\color{darkslateblue}\line(1,0){300}}
+\end{picture}
+\\
+\vspace{-30pt}
+]
+
+% margin
+\addtolength{\textwidth}{0in}
+\addtolength{\oddsidemargin}{0in}
+\addtolength{\textheight}{0in}
+\addtolength{\voffset}{0in}
+%\parindent=0zw
+
+
+% 演習
+\newtheorem{practice}{演習}[section]
+
+% Python
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttm,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\ttm\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttm\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false            % 
+}}
+
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+
+%opening
+
+
+\begin{document}
+
+% イントロダクション
+\chapter{Intro}
+\input{YamasakiLab/introduction}
+
+% 自然言語部分
+\chapter{Natural Language Processing}
+\input{TsuruokaLab/intro_nlp}
+\newpage
+\input{TsuruokaLab/sec_nlp} 
+
+% 強化学習部分
+\chapter{Reinforcement Learning}
+\input{TsuruokaLab/intro_rl}
+\newpage
+\input{TsuruokaLab/sec_rl}
+
+% 画像認識部分
+\chapter{Image Recognition}
+\input{YamasakiLab/sec1}
+\input{YamasakiLab/sec2}
+\input{YamasakiLab/sec3}
+
+\titleformat{\chapter}[block]
+{}{}{0pt}{
+	\fontsize{40pt}{40pt}\selectfont\filleft
+}[
+\hrule 
+]
+
+% 参考文献
+\bibliographystyle{plain}
+\bibliography{papers}
+
+% 追記 --------------------------------------------
+\titleformat{\chapter}[block]
+{}{}{0pt}{
+	\fontsize{30pt}{30pt}\selectfont\filleft
+}[
+\hrule 
+]
+
+\titleformat{\section}[block]
+{}{}{0pt}
+{
+	\hspace{0pt}
+%	\normalfont \LARGE\bfseries \thesection
+    \normalfont \LARGE\bfseries 
+	\hspace{0pt}
+}
+[
+\begin{picture}(100,0)
+%\put(3,30){\color{teal}\line(1,0){400}}
+\put(3,18){\color{teal}\line(1,0){350}}
+\end{picture}
+\\
+\vspace{-50pt}
+]
+\input{YamasakiLab/ack}
+
+%\chapter*{付録：Azureサーバ}
+%\input{YamasakiLab/azure1}
+
+% -----------------------------------------------
+
+\end{document}
